@@ -1,0 +1,15 @@
+{% extends 'main/layout.html'%}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+    <div class = "features">
+        <h1>{{ title }}</h1>
+        <p>Битбокс батл с кактусом</p>
+        <button class = "btn btn-warning"> Разработать </button>
+        {% for el in values%}
+        <p>{{ el|upper }}</p>
+        {% endfor %}
+        {{obj.yo}}
+    </div>
+{% endblock %}
