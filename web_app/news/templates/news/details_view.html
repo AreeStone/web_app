@@ -1,15 +1,55 @@
-{% extends 'main/layout.html'%}
+{% extends 'main/layout.html' %}
 
-{% block title %}{{ atricle.title }}{% endblock %}
+{% block title %}{{ article.title }}{% endblock %}
 
 {% block content %}
-    <div class = "features">
+    <div class="features">
         <h1>{{ article.title }}</h1>
-        <p> Дата публикации: {{ article.date }}</p>
-        <p> Последнее редактирование: {{ updated.date }}</p>
+        <p>Автор: {{ article.author }}</p>
+        <p>Дата публикации: {{ article.date }}</p>
+        <p>Последнее редактирование: {{ article.updated }}</p>
         <p>{{ article.full_text }}</p>
-        <a href="{% url 'news-delete' article.id %}" class ="btn btn-dager">Удалить</a>
-        <a href="{% url 'news-update' article.id %}" class ="btn btn-info">Редактировать</a>
+        <a href="{% url 'news-delete' article.id %}" class="btn btn-danger">Удалить</a>
+        <a href="{% url 'news-update' article.id %}" class="btn btn-info">Редактировать</a>
     </div>
+
+    <div class="comments">
+        <h2>Комментарии:</h2>
+         <style>
+        .comment {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+        }
+
+        .comment p {
+            margin: 0;
+        }
+
+        .comment-info {
+            font-style: italic;
+            color: #888;
+        }
+    </style>
+        {% for comment in article.comments.all %}
+            <div class="comment">
+                <p>Comment by {{ comment.author }} {{ comment.created }}</p>
+                <p>{{ comment.body }}</p>
+            </div>
+        {% empty %}
+            <p>Комментариев пока нет.</p>
+        {% endfor %}
+    </div>
+
+    <div class="comment-form">
+        <h2>Добавить комментарий:</h2>
+        <form method="post" action="{% url 'new_comment' article.id %}">
+            {% csrf_token %}
+            {{ form.body }}<br>
+            <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+    </div>
+
 
 {% endblock %}

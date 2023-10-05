@@ -27,8 +27,8 @@ class ArticlesForm(ModelForm):
         }
 
 
-# class CommentForm(ModelForm):
-#
-#     class Meta:
-#         model = Comment
-#         fields = ('body',)
+class CommentForm(ModelForm):
+
+    class Meta:
+        model = Comment
+        fields = ['body']

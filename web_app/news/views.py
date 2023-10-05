@@ -1,8 +1,12 @@
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.paginator import Paginator
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
+from django.views.decorators.http import require_POST
+
 from .models import Articles
-from .forms import ArticlesForm
+from .forms import ArticlesForm, CommentForm
 from django.views.generic import DetailView, UpdateView, DeleteView
 
 
@@ -19,17 +23,34 @@ class NewsDetailView(DetailView):
     template_name = 'news/details_view.html'
     context_object_name = 'article'
 
+    def form_valid(self, form):
+        form.instance.updated = timezone.now()
+        return super().form_valid(form)
 
-class NewsUpdateView(UpdateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CommentForm()
+        return context
+
+
+class NewsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Articles
     template_name = 'news/create.html'
-
     form_class = ArticlesForm
 
-class NewsDeleteView(DeleteView):
+    def test_func(self):
+        article = self.get_object()
+        return self.request.user == article.author or self.request.user.is_superuser
+
+
+class NewsDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Articles
     success_url = '/news/'
     template_name = 'news/news_delete.html'
+
+    def test_func(self):
+        article = self.get_object()
+        return self.request.user == article.author or self.request.user.is_superuser
 
 
 @login_required
@@ -46,7 +67,6 @@ def create(request):
         else:
             error = 'Форма была неверной'
 
-
     form = ArticlesForm()
 
     data = {
@@ -54,3 +74,20 @@ def create(request):
         'error': error
     }
     return render(request, 'news/create.html', data)
+
+@login_required
+def new_comment(request, pk):
+    article = get_object_or_404(Articles, pk=pk)
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.new = article
+            comment.author = request.user
+            comment.save()
+
+    else:
+        form = CommentForm()
+
+    return redirect('news-detail', pk=pk)
