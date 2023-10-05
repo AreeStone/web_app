@@ -10,10 +10,25 @@
             <a href="?page={{ news.previous_page_number }}" class="btn btn-warning">Предыдущая страница</a>
         {% endif %}
 
+        {% if tag %}
+            <h2>Posts tagged with "{{ tag.name }}"</h2>
+        {% endif %}
+
         {% for el in news %}
             <div class="alert alert-warning">
                 <div class = "alert alert-warning">
                             <h3>{{el.title}}</h3>
+                             <p class="tags">
+                                 {% if el.tags.all%}
+                                    Tags:
+                                    {% for tag in el.tags.all %}
+                                        <a href="{% url 'news_list_by_tag' tag.slug %}">
+                                            {{ tag.name }}
+                                        </a>
+                                        {% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                 {% endif %}
+                            </p>
                             <p>{{el.anons}}</p>
                             {% if el.author %}
                             <p>Автор : {{el.author}}</p>

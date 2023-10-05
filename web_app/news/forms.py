@@ -1,11 +1,13 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from taggit.forms import TagWidget
 
 from .models import Articles, Comment
-from django.forms import ModelForm, TextInput, DateTimeInput, Textarea
+from django.forms import ModelForm, TextInput, DateTimeInput, Textarea, CharField, Form
 
 
 class ArticlesForm(ModelForm):
+
     class Meta:
         model = Articles
         fields = ['title', 'anons', 'full_text']
@@ -14,11 +16,11 @@ class ArticlesForm(ModelForm):
             'title': TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Название статьи'
-        }),
+            }),
             'anons': TextInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Анонс статьи'
-        }),
+            }),
 
             'full_text': Textarea(attrs={
                 'class': 'form-control',
@@ -28,7 +30,7 @@ class ArticlesForm(ModelForm):
 
 
 class CommentForm(ModelForm):
-
     class Meta:
         model = Comment
         fields = ['body']
+

@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
+from taggit.managers import TaggableManager
 
 
 class Articles(models.Model):
@@ -10,6 +11,7 @@ class Articles(models.Model):
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    tags = TaggableManager()
 
     def __str__(self):
         return self.title
@@ -20,6 +22,7 @@ class Articles(models.Model):
     class Meta:
         verbose_name = 'Новость'
         verbose_name_plural = 'Новости'
+
 
 
 class Comment(models.Model):

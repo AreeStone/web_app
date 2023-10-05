@@ -1,21 +1,28 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.postgres.search import SearchVector
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
-from django.views.decorators.http import require_POST
+from taggit.models import Tag
 
 from .models import Articles
 from .forms import ArticlesForm, CommentForm
 from django.views.generic import DetailView, UpdateView, DeleteView
 
 
-def news_home(request):
+def news_home(request, tag_slug=None):
     news = Articles.objects.order_by('-date')
+
+    tag = None
+    if tag_slug:
+        tag = get_object_or_404(Tag, slug=tag_slug)
+        news = news.filter(tags__in=[tag])
+
     paginator = Paginator(news, 3)
     page = request.GET.get('page')
     news = paginator.get_page(page)
-    return render(request, 'news/news_home.html', {'news': news, 'paginator': paginator})
+    return render(request, 'news/news_home.html', {'news': news, 'paginator': paginator, 'tag': tag})
 
 
 class NewsDetailView(DetailView):
@@ -74,6 +81,7 @@ def create(request):
         'error': error
     }
     return render(request, 'news/create.html', data)
+
 
 @login_required
 def new_comment(request, pk):
