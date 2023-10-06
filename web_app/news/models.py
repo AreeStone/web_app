@@ -4,6 +4,11 @@ from django.utils import timezone
 from taggit.managers import TaggableManager
 
 
+class PublishedManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset()
+
+
 class Articles(models.Model):
     title = models.CharField('Название', max_length=50)
     anons = models.CharField('Анонс', max_length=250)
@@ -12,6 +17,10 @@ class Articles(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     tags = TaggableManager()
+
+    published = PublishedManager()
+
+    objects = models.Manager()
 
     def __str__(self):
         return self.title

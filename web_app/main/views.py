@@ -9,8 +9,10 @@ from .forms import RegisterForm
 def index(request):
     return render(request, 'main/index.html')
 
+
 def about(request):
     return render(request, 'main/about.html')
+
 
 def register(request):
     if request.method == 'GET':
@@ -21,7 +23,6 @@ def register(request):
         form = RegisterForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.username = user.username.lower()
             user.save()
             messages.success(request, 'You have singed up successfully.')
             login(request, user)

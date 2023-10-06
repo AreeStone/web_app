@@ -7,12 +7,12 @@ from django.utils import timezone
 from taggit.models import Tag
 
 from .models import Articles
-from .forms import ArticlesForm, CommentForm
+from .forms import ArticlesForm, CommentForm, SearchForm
 from django.views.generic import DetailView, UpdateView, DeleteView
 
 
 def news_home(request, tag_slug=None):
-    news = Articles.objects.order_by('-date')
+    news = Articles.published.order_by('-date')
 
     tag = None
     if tag_slug:
@@ -99,3 +99,4 @@ def new_comment(request, pk):
         form = CommentForm()
 
     return redirect('news-detail', pk=pk)
+

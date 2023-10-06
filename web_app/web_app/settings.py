@@ -41,7 +41,38 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'taggit',
     'django.contrib.postgres',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
+    # API
+    'rest_framework',
+    'news_api.apps.BlogApiConfig',
+    'django_filters',
+    # 'rest_framework.authtoken',
+    'drf_spectacular',
 ]
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "News API Project",
+    "DESCRIPTION": "A sample News",
+    "VERSION": "1.0.0",
+    # OTHER SETTINGS
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 3,
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        # "rest_framework.authentication.TokenAuthentication",
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -138,3 +169,5 @@ STATICFILES_DIRS = [
 LOGIN_REDIRECT_URL = '/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+SITE_ID = 1

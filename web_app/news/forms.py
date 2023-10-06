@@ -34,3 +34,6 @@ class CommentForm(ModelForm):
         model = Comment
         fields = ['body']
 
+
+class SearchForm(Form):
+    query = CharField()
